@@ -2,6 +2,7 @@
 
 import { Home, Trophy, Plus, Settings, Menu, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -55,9 +56,13 @@ export function Sidebar() {
               className="flex items-center gap-2 text-white"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <div className="w-8 h-8 rounded-xl bg-brand-500 flex items-center justify-center font-bold">
-                P
-              </div>
+              <Image
+                src="/logo.png"
+                alt="PostUps"
+                width={32}
+                height={32}
+                className="w-8 h-8"
+              />
               <span className="text-xl font-bold">PostUps</span>
             </Link>
           </div>
