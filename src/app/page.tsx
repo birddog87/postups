@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Hero } from "@/components/landing/hero";
 import { Features } from "@/components/landing/features";
 import { Pricing } from "@/components/landing/pricing";
@@ -5,6 +6,29 @@ import { Pricing } from "@/components/landing/pricing";
 export default function HomePage() {
   return (
     <main className="bg-surface min-h-screen">
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-surface-border">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="text-xl font-bold text-white">
+            PostUps
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/login"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/signup"
+              className="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              Sign up
+            </Link>
+          </div>
+        </div>
+      </nav>
+
       <Hero />
       <Features />
       <Pricing />
