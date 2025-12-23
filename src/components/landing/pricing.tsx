@@ -32,7 +32,7 @@ const tiers = [
       "Email support",
       "Basic analytics",
     ],
-    cta: "Start Free Trial",
+    cta: "Get Started",
     popular: false,
   },
   {
@@ -47,7 +47,7 @@ const tiers = [
       "Advanced analytics",
       "Remove 'Powered by PostUps'",
     ],
-    cta: "Start Free Trial",
+    cta: "Get Started",
     popular: true,
   },
   {
@@ -71,15 +71,15 @@ const tiers = [
 const trustBadges = [
   {
     icon: Clock,
-    text: "14-day free trial",
+    text: "Free to set up",
   },
   {
     icon: Shield,
-    text: "No credit card required",
+    text: "No credit card to start",
   },
   {
     icon: Check,
-    text: "Cancel anytime",
+    text: "Pay only when you go live",
   },
 ];
 
@@ -242,7 +242,7 @@ export function Pricing() {
         {/* Additional trust message */}
         <div className="text-center mt-8">
           <p className="text-gray-500 text-sm">
-            All plans include a 14-day free trial. No credit card required to start.
+            Set up your league for free. Only pay when you&apos;re ready to go live.
           </p>
         </div>
       </div>
