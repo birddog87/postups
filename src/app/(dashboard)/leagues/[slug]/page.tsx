@@ -116,10 +116,12 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                   league
                 </CardDescription>
               </div>
-              <Button size="sm" variant="secondary">
-                <Plus className="w-4 h-4" />
-                Add Team
-              </Button>
+              <Link href={`/leagues/${slug}/teams/new`}>
+                <Button size="sm" variant="secondary">
+                  <Plus className="w-4 h-4" />
+                  Add Team
+                </Button>
+              </Link>
             </div>
           </CardHeader>
           <CardContent>
@@ -166,10 +168,12 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                   scheduled
                 </CardDescription>
               </div>
-              <Button size="sm" variant="secondary">
-                <Plus className="w-4 h-4" />
-                Add Game
-              </Button>
+              <Link href={`/leagues/${slug}/games/new`}>
+                <Button size="sm" variant="secondary">
+                  <Plus className="w-4 h-4" />
+                  Add Game
+                </Button>
+              </Link>
             </div>
           </CardHeader>
           <CardContent>
@@ -185,30 +189,32 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
             ) : (
               <div className="space-y-2">
                 {games.map((game) => (
-                  <div
+                  <Link
                     key={game.id}
-                    className="p-3 bg-surface rounded-xl hover:bg-surface-overlay transition-colors"
+                    href={`/leagues/${slug}/games/${game.id}`}
                   >
-                    <div className="flex items-center justify-between mb-1">
-                      <Badge
-                        variant={
-                          game.status === "completed"
-                            ? "success"
-                            : game.status === "cancelled"
-                              ? "error"
-                              : "default"
-                        }
-                      >
-                        {game.status}
-                      </Badge>
-                      <span className="text-xs text-gray-400">
-                        {new Date(game.scheduled_date).toLocaleDateString()}
-                      </span>
+                    <div className="p-3 bg-surface rounded-xl hover:bg-surface-overlay transition-colors cursor-pointer">
+                      <div className="flex items-center justify-between mb-1">
+                        <Badge
+                          variant={
+                            game.status === "completed"
+                              ? "success"
+                              : game.status === "cancelled"
+                                ? "error"
+                                : "default"
+                          }
+                        >
+                          {game.status}
+                        </Badge>
+                        <span className="text-xs text-gray-400">
+                          {new Date(game.scheduled_date).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="text-sm text-white">
+                        {game.location || "TBD"}
+                      </div>
                     </div>
-                    <div className="text-sm text-white">
-                      {game.location || "TBD"}
-                    </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
