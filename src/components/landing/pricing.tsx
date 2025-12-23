@@ -201,9 +201,12 @@ export function Pricing() {
         </div>
 
         {/* Trust */}
-        <div className="mt-16 text-center">
+        <div className="mt-16 text-center space-y-2">
           <p className="text-gray-500">
             Free to set up • No credit card required • Pay only when you go live
+          </p>
+          <p className="text-gray-600 text-xs">
+            All prices in USD
           </p>
         </div>
       </div>
