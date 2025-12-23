@@ -29,7 +29,7 @@ export default async function LeaguesPage() {
 
   const leaguesWithCount = leagues?.map((league) => ({
     ...league,
-    teamCount: Array.isArray(league.teams) ? league.teams.length : 0,
+    teamCount: league.teams?.[0]?.count || 0,
   })) || [];
 
   return (

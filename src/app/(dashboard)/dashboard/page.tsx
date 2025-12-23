@@ -16,9 +16,15 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // TODO: Fetch user's leagues from database
-  // For now, we'll show the empty state
-  const leagues: any[] = [];
+  // Fetch user's leagues from database
+  const { data: leagues } = await supabase
+    .from("leagues")
+    .select(`
+      *,
+      teams:teams(count)
+    `)
+    .eq("owner_id", user?.id || "")
+    .order("created_at", { ascending: false });
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -33,7 +39,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Main content */}
-      {leagues.length === 0 ? (
+      {!leagues || leagues.length === 0 ? (
         // Empty state - no leagues
         <Card className="text-center py-12">
           <CardContent>
@@ -77,25 +83,27 @@ export default async function DashboardPage() {
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {leagues.map((league) => (
-              <Card key={league.id} hover>
-                <CardHeader>
-                  <CardTitle>{league.name}</CardTitle>
-                  <CardDescription>{league.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-2 text-sm text-gray-400">
-                    <Trophy className="w-4 h-4" />
-                    <span>{league.teamCount || 0} teams</span>
-                  </div>
-                </CardContent>
-              </Card>
+              <Link key={league.id} href={`/leagues/${league.slug}`}>
+                <Card hover>
+                  <CardHeader>
+                    <CardTitle>{league.name}</CardTitle>
+                    <CardDescription className="capitalize">{league.sport}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 text-sm text-gray-400">
+                      <Trophy className="w-4 h-4" />
+                      <span>{league.teams?.[0]?.count || 0} teams</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>
       )}
 
       {/* Quick stats - placeholder for future */}
-      {leagues.length > 0 && (
+      {leagues && leagues.length > 0 && (
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader>
