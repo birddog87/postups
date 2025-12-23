@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "My Leagues", href: "/dashboard/leagues", icon: Trophy },
-  { name: "Create League", href: "/dashboard/create", icon: Plus },
+  { name: "My Leagues", href: "/leagues", icon: Trophy },
+  { name: "Create League", href: "/leagues/new", icon: Plus },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 

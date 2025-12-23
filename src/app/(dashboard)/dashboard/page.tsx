@@ -53,7 +53,7 @@ export default async function DashboardPage() {
                 </p>
               </div>
 
-              <Link href="/dashboard/create">
+              <Link href="/leagues/new">
                 <Button size="lg" className="w-full sm:w-auto">
                   <Plus className="w-5 h-5" />
                   Create League
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
         <div>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-white">Your Leagues</h2>
-            <Link href="/dashboard/create">
+            <Link href="/leagues/new">
               <Button>
                 <Plus className="w-4 h-4" />
                 New League
