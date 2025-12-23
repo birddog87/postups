@@ -38,6 +38,9 @@ CREATE TABLE public.teams (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Add unique constraint on team names within a league
+ALTER TABLE public.teams ADD CONSTRAINT teams_league_name_unique UNIQUE (league_id, name);
+
 -- Games table (schedule + results)
 CREATE TABLE public.games (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -55,9 +58,12 @@ CREATE TABLE public.games (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Add constraint to prevent a team from playing itself
+ALTER TABLE public.games ADD CONSTRAINT games_different_teams_check
+  CHECK (home_team_id != away_team_id);
+
 -- Create indexes for performance
 CREATE INDEX idx_leagues_owner ON public.leagues(owner_id);
-CREATE INDEX idx_leagues_slug ON public.leagues(slug);
 CREATE INDEX idx_teams_league ON public.teams(league_id);
 CREATE INDEX idx_games_league ON public.games(league_id);
 CREATE INDEX idx_games_date ON public.games(scheduled_date);
@@ -77,6 +83,9 @@ CREATE POLICY "Public profiles are viewable by everyone" ON public.profiles
 
 CREATE POLICY "Users can update own profile" ON public.profiles
   FOR UPDATE USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert own profile" ON public.profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- Leagues: Public read, owner write
 CREATE POLICY "Leagues are viewable by everyone" ON public.leagues
@@ -115,7 +124,10 @@ CREATE POLICY "League owners can manage games" ON public.games
 
 -- Function to handle new user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+SECURITY DEFINER
+SET search_path = public, auth
+AS $$
 BEGIN
   INSERT INTO public.profiles (id, email, full_name, avatar_url)
   VALUES (
@@ -126,7 +138,7 @@ BEGIN
   );
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql;
 
 -- Trigger for new user signup
 CREATE OR REPLACE TRIGGER on_auth_user_created
@@ -140,3 +152,25 @@ BEGIN
   RETURN LOWER(REGEXP_REPLACE(REGEXP_REPLACE(name, '[^a-zA-Z0-9\s-]', '', 'g'), '\s+', '-', 'g'));
 END;
 $$ LANGUAGE plpgsql;
+
+-- Function to automatically update updated_at timestamp
+CREATE OR REPLACE FUNCTION public.handle_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Apply updated_at triggers to all tables
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON public.profiles
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON public.leagues
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON public.teams
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON public.games
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
