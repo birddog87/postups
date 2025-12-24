@@ -174,6 +174,10 @@ export function generateTeamNames(count: number, sport: string): string[] {
     volleyball: ["Spikers", "Aces", "Setters", "Blockers", "Diggers", "Smash", "Rally", "Volley", "Net", "Court", "Attack", "Serve"],
     football: ["Gridiron", "Blitz", "Chargers", "Titans", "Eagles", "Hawks", "Bears", "Lions", "Giants", "Raiders", "Chiefs", "Colts"],
     softball: ["Sluggers", "Batters", "Diamonds", "Homers", "Innings", "Pitchers", "Catchers", "Sliders", "Curves", "Strikes", "Bases", "Runs"],
+    badminton: ["Shuttlers", "Smashers", "Rackets", "Aces", "Rally", "Court", "Net", "Birdie", "Drive", "Clear", "Drop", "Flight"],
+    tennis: ["Aces", "Rackets", "Volleys", "Smashers", "Baseline", "Court", "Grand Slam", "Match Point", "Deuce", "Advantage", "Love", "Set"],
+    pickleball: ["Picklers", "Dinkers", "Paddlers", "Kitchen", "Rally", "Smash", "Volley", "Drop Shot", "Aces", "Third Shot", "Court", "Net"],
+    baseball: ["Sluggers", "Batters", "Diamonds", "Homers", "Innings", "All Stars", "Aces", "Sliders", "Curves", "Strikes", "Bases", "Grand Slam"],
     other: ["Team Alpha", "Team Beta", "Team Gamma", "Team Delta", "Team Epsilon", "Team Zeta", "Team Eta", "Team Theta", "Team Iota", "Team Kappa", "Team Lambda", "Team Mu"],
   };
 

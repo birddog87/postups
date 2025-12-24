@@ -7,7 +7,7 @@ import { QuickSetupData } from "@/lib/types/quick-setup";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { data } = body as { data: QuickSetupData };
+    const { data } = body as { data: Partial<QuickSetupData> };
 
     if (!data) {
       return NextResponse.json(
@@ -16,21 +16,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Ensure all required fields exist with defaults
+    const completeData: QuickSetupData = {
+      league: {
+        name: data.league?.name || "My League",
+        sport: data.league?.sport || "other",
+      },
+      teams: {
+        count: data.teams?.count || 8,
+        names: data.teams?.names || [],
+      },
+      schedule: {
+        days: data.schedule?.days || ["monday"],
+        timeSlots: data.schedule?.timeSlots || ["19:00"],
+        startDate: data.schedule?.startDate || new Date().toISOString().split("T")[0],
+        endDate: data.schedule?.endDate || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        format: data.schedule?.format || "round-robin",
+      },
+      location: {
+        name: data.location?.name || "TBD",
+        address: data.location?.address,
+      },
+    };
+
     // Generate team names if not provided
-    if (data.teams.names.length === 0) {
-      data.teams.names = generateTeamNames(data.teams.count, data.league.sport);
+    if (completeData.teams.names.length === 0) {
+      completeData.teams.names = generateTeamNames(completeData.teams.count, completeData.league.sport);
     }
 
     // Ensure we have the right number of team names
-    if (data.teams.names.length < data.teams.count) {
+    if (completeData.teams.names.length < completeData.teams.count) {
       const additionalNames = generateTeamNames(
-        data.teams.count - data.teams.names.length,
-        data.league.sport
+        completeData.teams.count - completeData.teams.names.length,
+        completeData.league.sport
       );
-      data.teams.names = [...data.teams.names, ...additionalNames];
+      completeData.teams.names = [...completeData.teams.names, ...additionalNames];
     }
 
-    const schedule = generateSchedule(data);
+    const schedule = generateSchedule(completeData);
 
     return NextResponse.json({
       success: true,
