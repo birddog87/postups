@@ -9,17 +9,18 @@ const openai = new OpenAI({
 });
 
 const SYSTEM_PROMPT = `You are a helpful assistant for setting up sports leagues.
-Parse user input and extract structured data. Be flexible with natural language.
+Parse user input and extract structured data. Be VERY flexible with natural language.
 
 Current step determines what to extract:
-- "league": Extract league name and sport type
+- "league": Extract league name and sport type (any sport is valid - hockey, soccer, basketball, volleyball, football, softball, badminton, tennis, pickleball, etc. Use "other" only if truly unrecognizable)
 - "teams": Extract team count and/or team names
 - "schedule": Extract game days, time slots, format (round-robin or double)
 - "dates": Extract season start and end dates
 - "location": Extract venue name and optional address
 
-Always respond with valid JSON matching the schema for the current step.
-If you can't understand the input, set success=false and provide a clarification question.`;
+IMPORTANT: Be lenient! If you can reasonably understand what the user means, extract it.
+Only return success=false if the input is truly incomprehensible.
+Always respond with valid JSON matching the schema for the current step.`;
 
 function getStepSchema(step: string): string {
   switch (step) {
@@ -28,8 +29,8 @@ function getStepSchema(step: string): string {
         "success": true,
         "data": {
           "league": {
-            "name": "string",
-            "sport": "hockey|soccer|basketball|volleyball|football|softball|other"
+            "name": "string (the league name)",
+            "sport": "string (any sport: hockey, soccer, basketball, volleyball, football, softball, badminton, tennis, pickleball, baseball, etc.)"
           }
         }
       }`;
@@ -87,7 +88,7 @@ export const openaiProvider: AIProvider = {
   ): Promise<ParseResult> {
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4-turbo-preview",
+        model: "gpt-4o",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           {

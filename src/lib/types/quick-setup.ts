@@ -9,14 +9,8 @@ export type DayOfWeek =
   | "saturday"
   | "sunday";
 
-export type SportType =
-  | "hockey"
-  | "soccer"
-  | "basketball"
-  | "volleyball"
-  | "football"
-  | "softball"
-  | "other";
+// Common sports, but accepts any string for flexibility
+export type SportType = string;
 
 export type ScheduleFormat = "round-robin" | "double-round-robin";
 

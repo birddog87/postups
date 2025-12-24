@@ -4,8 +4,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Card, CardContent, Input } from "@/components/ui";
-import { Send, Loader2, Check, ChevronRight } from "lucide-react";
+import { Button, Card, CardContent } from "@/components/ui";
+import { Send, Loader2, Check, Sparkles, Users, Calendar, MapPin, Trophy } from "lucide-react";
 import {
   QuickSetupData,
   ChatMessage,
@@ -17,26 +17,36 @@ const WIZARD_STEPS = [
     id: "league",
     question: "What's your league called and what sport do you play?",
     placeholder: "e.g., Sunday Night Hockey League",
+    icon: Trophy,
+    label: "League",
   },
   {
     id: "teams",
     question: "How many teams? You can list team names or just give me a number.",
     placeholder: "e.g., 8 teams or Thunderbolts, Red Wings, Warriors...",
+    icon: Users,
+    label: "Teams",
   },
   {
     id: "schedule",
     question: "What days and times do you play?",
     placeholder: "e.g., Mondays at 6pm and 8pm",
+    icon: Calendar,
+    label: "Schedule",
   },
   {
     id: "dates",
     question: "When does the season start and end?",
     placeholder: "e.g., January 15 to March 30",
+    icon: Calendar,
+    label: "Dates",
   },
   {
     id: "location",
     question: "Where are games played?",
     placeholder: "e.g., Central Recreation Center",
+    icon: MapPin,
+    label: "Location",
   },
 ];
 
@@ -227,36 +237,67 @@ export function QuickSetupWizard() {
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
+    <Card className="overflow-hidden">
       <CardContent className="p-0">
-        {/* Progress indicator */}
-        <div className="flex items-center gap-2 p-4 border-b border-surface-border">
-          {WIZARD_STEPS.map((step, index) => (
-            <div key={step.id} className="flex items-center">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
-                  index < currentStep
-                    ? "bg-brand-500 text-white"
-                    : index === currentStep
-                    ? "bg-brand-500/20 text-brand-500 border-2 border-brand-500"
-                    : "bg-surface-border text-gray-500"
-                }`}
-              >
-                {index < currentStep ? (
-                  <Check className="w-4 h-4" />
-                ) : (
-                  index + 1
-                )}
-              </div>
-              {index < WIZARD_STEPS.length - 1 && (
-                <ChevronRight className="w-4 h-4 text-gray-500 mx-1" />
-              )}
+        {/* Header with AI badge */}
+        <div className="bg-gradient-to-r from-brand-600 to-brand-500 p-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
             </div>
-          ))}
+            <div>
+              <h2 className="text-xl font-bold text-white">AI Setup Assistant</h2>
+              <p className="text-white/80 text-sm">Answer a few questions and we&apos;ll create your league</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress Steps */}
+        <div className="px-6 py-4 bg-surface-raised border-b border-surface-border">
+          <div className="flex items-center justify-between">
+            {WIZARD_STEPS.map((step, index) => {
+              const Icon = step.icon;
+              const isComplete = index < currentStep;
+              const isCurrent = index === currentStep;
+              return (
+                <div key={step.id} className="flex flex-col items-center flex-1">
+                  <div className="flex items-center w-full">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                        isComplete
+                          ? "bg-brand-500 text-white"
+                          : isCurrent
+                          ? "bg-brand-500/20 text-brand-500 ring-2 ring-brand-500"
+                          : "bg-surface-border text-gray-500"
+                      }`}
+                    >
+                      {isComplete ? (
+                        <Check className="w-5 h-5" />
+                      ) : (
+                        <Icon className="w-5 h-5" />
+                      )}
+                    </div>
+                    {index < WIZARD_STEPS.length - 1 && (
+                      <div
+                        className={`flex-1 h-1 mx-2 rounded ${
+                          isComplete ? "bg-brand-500" : "bg-surface-border"
+                        }`}
+                      />
+                    )}
+                  </div>
+                  <span className={`text-xs mt-2 font-medium ${
+                    isCurrent ? "text-brand-500" : isComplete ? "text-white" : "text-gray-500"
+                  }`}>
+                    {step.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Chat messages */}
-        <div className="h-[400px] overflow-y-auto p-4 space-y-4">
+        <div className="h-[350px] overflow-y-auto p-6 space-y-4 bg-surface">
           {messages.map((message, index) => (
             <div
               key={index}
@@ -264,57 +305,84 @@ export function QuickSetupWizard() {
                 message.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
+              {message.role === "assistant" && (
+                <div className="w-8 h-8 rounded-full bg-brand-500/20 flex items-center justify-center mr-3 flex-shrink-0">
+                  <Sparkles className="w-4 h-4 text-brand-500" />
+                </div>
+              )}
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                className={`max-w-[75%] rounded-2xl px-4 py-3 ${
                   message.role === "user"
-                    ? "bg-brand-500 text-white"
-                    : "bg-surface-raised text-white border border-surface-border"
+                    ? "bg-brand-500 text-white rounded-br-md"
+                    : "bg-surface-raised text-white border border-surface-border rounded-bl-md"
                 }`}
               >
-                {message.content}
+                <p className="text-sm leading-relaxed">{message.content}</p>
               </div>
             </div>
           ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="w-8 h-8 rounded-full bg-brand-500/20 flex items-center justify-center mr-3">
+                <Sparkles className="w-4 h-4 text-brand-500" />
+              </div>
+              <div className="bg-surface-raised border border-surface-border rounded-2xl rounded-bl-md px-4 py-3">
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                </div>
+              </div>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
 
         {/* Preview section */}
         {generatedSchedule && (
-          <div className="p-4 border-t border-surface-border space-y-4">
-            <h3 className="font-semibold text-white">Preview</h3>
+          <div className="p-6 border-t border-surface-border bg-surface-raised space-y-4">
+            <div className="flex items-center gap-2">
+              <Check className="w-5 h-5 text-brand-500" />
+              <h3 className="font-semibold text-white">Your League Preview</h3>
+            </div>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-surface-raised p-3 rounded-lg border border-surface-border">
-                <p className="text-gray-400">Teams</p>
-                <p className="text-white font-medium">
-                  {generatedSchedule.teams.length} teams
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-surface p-4 rounded-xl border border-surface-border">
+                <div className="flex items-center gap-2 mb-2">
+                  <Users className="w-4 h-4 text-brand-500" />
+                  <p className="text-gray-400 text-sm">Teams</p>
+                </div>
+                <p className="text-2xl font-bold text-white">
+                  {generatedSchedule.teams.length}
                 </p>
-                <div className="mt-2 flex flex-wrap gap-1">
+                <div className="mt-3 flex flex-wrap gap-1">
                   {generatedSchedule.teams.slice(0, 4).map((team, i) => (
                     <span
                       key={i}
-                      className="px-2 py-0.5 rounded text-xs"
+                      className="px-2 py-1 rounded-lg text-xs font-medium"
                       style={{ backgroundColor: team.color + "20", color: team.color }}
                     >
                       {team.name}
                     </span>
                   ))}
                   {generatedSchedule.teams.length > 4 && (
-                    <span className="text-gray-500 text-xs">
+                    <span className="px-2 py-1 text-gray-500 text-xs">
                       +{generatedSchedule.teams.length - 4} more
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="bg-surface-raised p-3 rounded-lg border border-surface-border">
-                <p className="text-gray-400">Schedule</p>
-                <p className="text-white font-medium">
-                  {generatedSchedule.games.length} games
+              <div className="bg-surface p-4 rounded-xl border border-surface-border">
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar className="w-4 h-4 text-brand-500" />
+                  <p className="text-gray-400 text-sm">Games</p>
+                </div>
+                <p className="text-2xl font-bold text-white">
+                  {generatedSchedule.games.length}
                 </p>
-                <p className="text-gray-500 text-xs mt-1">
-                  {generatedSchedule.games[0]?.date} to{" "}
-                  {generatedSchedule.games[generatedSchedule.games.length - 1]?.date}
+                <p className="text-gray-500 text-xs mt-3">
+                  {generatedSchedule.games[0]?.date} → {generatedSchedule.games[generatedSchedule.games.length - 1]?.date}
                 </p>
               </div>
             </div>
@@ -325,6 +393,7 @@ export function QuickSetupWizard() {
               className="w-full"
               size="lg"
             >
+              <Trophy className="w-4 h-4 mr-2" />
               Create League
             </Button>
           </div>
@@ -332,21 +401,26 @@ export function QuickSetupWizard() {
 
         {/* Input area */}
         {!generatedSchedule && (
-          <div className="p-4 border-t border-surface-border">
-            <div className="flex gap-2">
-              <Input
+          <div className="p-4 border-t border-surface-border bg-surface-raised">
+            <div className="flex gap-3">
+              <input
+                type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={WIZARD_STEPS[currentStep]?.placeholder || "Type your answer..."}
                 disabled={loading}
-                className="flex-1"
+                className="flex-1 bg-surface border border-surface-border rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
               />
-              <Button onClick={handleSend} disabled={loading || !input.trim()}>
+              <Button
+                onClick={handleSend}
+                disabled={loading || !input.trim()}
+                className="px-4"
+              >
                 {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
-                  <Send className="w-4 h-4" />
+                  <Send className="w-5 h-5" />
                 )}
               </Button>
             </div>
